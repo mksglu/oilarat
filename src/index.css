@@ -1,0 +1,10 @@
+html,
+body {
+  height: 100%;
+  padding-top: 0.5rem;
+
+  text-align: center;
+}
+.mt-5 {
+  margin-bottom: 1.1rem;
+}
