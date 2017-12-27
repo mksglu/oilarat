@@ -1,12 +1,13 @@
 import React, { Component } from "react";
- 
-class TableList extends Component {
+import Checkbox from './Checkbox';
+
+class Row extends Component {
   render() {
     const { id, username, name, email, phone, website } = this.props.details;
     return (
       <tr>
         <th scope="row">
-          <input type="checkbox" checked={this.props.check}  value={id} onChange={this.props.handleChecks}/>
+          <Checkbox checked={this.props.selected} value={id} onChange={this.props.handleSelect} />
         </th>
         <td>{id}</td>
         <td>{username}</td>
@@ -21,4 +22,4 @@ class TableList extends Component {
   }
 }
 
-export default TableList;
+export default Row;

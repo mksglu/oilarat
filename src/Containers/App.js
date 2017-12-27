@@ -31,8 +31,8 @@ class App extends Component {
     return (
       <div className="container">
         <div className="row h-100 justify-content-md-center">
-          <GMap users={this.props.graph.data} />
-          <PieChart users={this.props.graph.data} />
+          <GMap/>
+          <PieChart/>
         </div>
         <div className="row h-100 mt-5 justify-content-md-center">
           <Table

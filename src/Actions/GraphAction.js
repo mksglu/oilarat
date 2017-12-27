@@ -24,6 +24,7 @@ function graphFailed(error) {
 export const updateGraphs = users => dispatch => {
   dispatch(graphIsUpdating());
   //data = [1,2,,3] <= user ids.
+ 
   if(!users.length){
     //clear data.
     dispatch(graphUpdated([]));

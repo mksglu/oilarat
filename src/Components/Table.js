@@ -1,61 +1,69 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
+import pickBy from 'lodash/pickBy';
+import keys from 'lodash/keys';
+import mapValues from 'lodash/mapValues';
 
-import TableList from "./TableList";
+import Row from "./Row";
+import Checkbox from "./Checkbox";
 
 class Table extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      checkedBoxes: [],
-      checkedAll: null
+      checkBoxControl : {},
+      isCheckedAll : false
     };
 
-    this.handleChecks = this.handleChecks.bind(this);
-    this.handeChecksAll = this.handleChecksAll.bind(this);
+    this.handleSelect = this.handleSelect.bind(this);
   }
 
-  handleChecksAll = e => {
-    const checkedBoxes = this.state.checkedBoxes;
-    const id = this.props.userList.data.map(user => user.id);
-    if (e.target.checked) {
-      this.setState(
-        {
-          checkedBoxes: id,
-          checkedAll: true
-        },
-        () => {
-          this.props.selectedUser(this.state.checkedBoxes);
-        }
-      );
-    } else {
-      this.setState(
-        {
-          checkedBoxes: [],
-          checkedAll: null
-        },
-        () => {
-          this.props.selectedUser(this.state.checkedBoxes);
-        }
-      );
+  handleSelect(e, checkAll) {
+    let currentState = this.state.checkBoxControl
+    if(checkAll){
+      currentState = mapValues(currentState, () => !this.state.isCheckedAll);
+      this.setState({
+        isCheckedAll: !this.state.isCheckedAll
+      })
+    }else{
+      const uid = e.target.value;
+      if(!this.state.isCheckedAll){
+        currentState[uid] = !currentState[uid]
+      }
     }
-  };
 
-  handleChecks(e) {
-    const value = e.target.value;
-    const checkedBoxes = this.state.checkedBoxes;
-    if (!e.target.checked) {
-      checkedBoxes.splice(checkedBoxes.indexOf(value), 1);
-    } else {
-      checkedBoxes.push(value);
+    this.setState({
+      checkBoxControl: currentState
+    })
+    this.props.selectedUser(keys(pickBy(currentState)))
+  }
+
+  componentWillReceiveProps(props) {
+    if(!props.userList.data.length){
+      return false
     }
-    this.setState(
-      {
-        checkedBoxes: checkedBoxes
-      },
-      this.props.selectedUser(this.state.checkedBoxes)
-    );
+    const data = props.userList.data
+    const checkBoxControl = {}
+    //DATA[KEY] = 1. user data [key].İd = 1.user ın İd sİ 
+    // Ben böyle bir işlem yaptıgımda donduden cıkamıyorum. Tum ıslemlerımı dongude bıtırmek zorunda kalıyorum.
+    // Sen burada donguden nasıl cıktın O NEDEMEK NEDEN CAPS KALDI BENDE YAasdasdasd heh
+    // Ben sanıyordum ki dongude olusturduugm seyi dongu dısında erısemem sen bunnn ıcını
+    // checkBoxControl dongu ıcerısınde olusturuyosun bro ama state kısmın
+    // abi döngü out of scope birşey değilki kendi içerisinde ayrı bi function açmıyo yani aynı scope da
+    // anda cok iyi dimi neey genel :D böyle her seye erısıp acıp kapatıyosun felan 
+    // ne guzel seyler ya sdfg lodash ı nerden calısabılırım anda ben boyle lan bunu nasıl yaparım dedıgımde
+    // aklıma lodash gelmeli 
+    // bende yeni sayılırım lodash de pek öyle ahım şahım bilgim yok ama 
+    // genelde stack overflow da bulduğum cevaplar
+    // su dun attıgım todo seyıne baktın mı adam lodahs kullanmıs eet guzeldı
+    for(var key in data){
+      checkBoxControl[data[key].id] = false
+    }
+
+    this.setState({
+      checkBoxControl : checkBoxControl
+    })
   }
 
   render() {
@@ -67,11 +75,9 @@ class Table extends Component {
               <thead className="thead-inverse">
                 <tr>
                   <th>
-                    <input
-                      type="checkbox"
-                      onChange={this.handleChecksAll}
-                      checked={this.state.checkedAll}
-                      id="checkall"
+                    <Checkbox
+                      onChange={(e) => this.handleSelect(e, true)} 
+                      checked={this.state.isCheckedAll}
                     />
                   </th>
                   <th>ID</th>
@@ -86,11 +92,11 @@ class Table extends Component {
               </thead>
               <tbody>
                 {this.props.userList.data.map((user, i) => (
-                  <TableList
+                  <Row
                     key={i}
-                    handleChecks={this.handleChecks.bind(this)}
+                    handleSelect={this.handleSelect.bind(this)}
                     details={user}
-                    check={this.state.checkedAll}
+                    selected={this.state.checkBoxControl[user.id]}
                   />
                 ))}
               </tbody>
